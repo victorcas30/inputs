@@ -9,8 +9,12 @@
 
   <h1>Seleccionar imagen o tomar foto</h1>
 
-  <!-- Input para seleccionar imágenes de la galería o tomar una foto -->
-  <input type="file" id="inputImagen" accept="image/*" capture="camera">
+  <!-- Botón para seleccionar imágenes de la galería -->
+  <input type="file" id="inputImagen" accept="image/*" style="display: none;">
+  <button id="botonSeleccionarImagen">Seleccionar desde la Galería</button>
+
+  <!-- Botón para tomar una foto -->
+  <button id="botonTomarFoto">Tomar Foto</button>
 
   <!-- Elemento para mostrar la imagen seleccionada o tomada -->
   <img id="imagenMostrada" style="display: none;">
@@ -19,7 +23,14 @@
     document.addEventListener('DOMContentLoaded', function () {
       // Referencias a los elementos del DOM
       var inputImagen = document.getElementById('inputImagen');
+      var botonSeleccionarImagen = document.getElementById('botonSeleccionarImagen');
+      var botonTomarFoto = document.getElementById('botonTomarFoto');
       var imagenMostrada = document.getElementById('imagenMostrada');
+
+      // Evento cuando se hace clic en el botón para seleccionar desde la galería
+      botonSeleccionarImagen.addEventListener('click', function () {
+        inputImagen.click();
+      });
 
       // Evento cuando se selecciona una imagen de la galería o se toma una foto
       inputImagen.addEventListener('change', function (event) {
@@ -27,6 +38,11 @@
         if (archivo) {
           mostrarImagen(archivo);
         }
+      });
+
+      // Evento cuando se hace clic en el botón para tomar foto
+      botonTomarFoto.addEventListener('click', function () {
+        abrirCamara();
       });
 
       // Función para mostrar la imagen seleccionada o tomada
@@ -37,6 +53,34 @@
           imagenMostrada.style.display = 'block';
         };
         lector.readAsDataURL(archivo);
+      }
+
+      // Función para abrir la cámara y permitir al usuario tomar una foto
+      function abrirCamara() {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            var video = document.createElement('video');
+            document.body.appendChild(video);
+            video.srcObject = stream;
+            video.play();
+
+            video.addEventListener('canplay', function () {
+              var canvas = document.createElement('canvas');
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+              mostrarImagen(canvas.toDataURL('image/png'));
+
+              // Detener la transmisión de la cámara
+              stream.getTracks().forEach(track => track.stop());
+
+              // Eliminar el elemento de video
+              document.body.removeChild(video);
+            });
+          })
+          .catch(function (error) {
+            console.error('Error al acceder a la cámara: ', error);
+          });
       }
     });
   </script>
