@@ -3,87 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seleccionar imagen o tomar foto</title>
+  <title>Acceder a la cámara</title>
 </head>
 <body>
-
-  <h1>Seleccionar imagen o tomar foto</h1>
-
-  <!-- Input para seleccionar imágenes de la galería o tomar una foto -->
-  <input type="file" id="inputImagen" accept="image/*" capture="camera">
-
-  <!-- Elemento para mostrar la imagen seleccionada o tomada -->
-  <img id="imagenMostrada" style="display: none;">
-
-  <input type="file" capture="camera">
-
-<img src="data:image/png;base64,${imagenBase64}">
-
-
-  <input type="file" accept="image/*" capture>
-<input type="file" accept="image/*" capture="user">
-<input type="file" accept="image/*" capture="environment">
-
-
-
-  <button id="abrir-camara">Abrir cámara</button>
-  <button id="mostrar-carrete">Mostrar carrete</button>
-
-
+  <button onclick="accederCamara()">Abrir cámara</button>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Referencias a los elementos del DOM
-      var inputImagen = document.getElementById('inputImagen');
-      var imagenMostrada = document.getElementById('imagenMostrada');
-
-      // Evento cuando se selecciona una imagen de la galería o se toma una foto
-      inputImagen.addEventListener('change', function (event) {
-        var archivo = event.target.files[0];
-        if (archivo) {
-          mostrarImagen(archivo);
-        }
-      });
-
-      // Función para mostrar la imagen seleccionada o tomada
-      function mostrarImagen(archivo) {
-        var lector = new FileReader();
-        lector.onload = function (e) {
-          imagenMostrada.src = e.target.result;
-          imagenMostrada.style.display = 'block';
-        };
-        lector.readAsDataURL(archivo);
+    function accederCamara() {
+      // Verificar si el navegador admite la API de medios
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Solicitar acceso a la cámara
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            // El stream proporciona acceso a la cámara, puedes usarlo para mostrar la vista previa o realizar otras acciones
+            console.log('Cámara abierta correctamente');
+          })
+          .catch(function (error) {
+            console.error('Error al abrir la cámara:', error);
+          });
+      } else {
+        console.error('La API de medios no está soportada en este navegador');
       }
-    });
-
-    const camera = navigator.camera;
-
-// Función para abrir la cámara
-function abrirCamara() {
-  camera.open({
-    mediaType: "image",
-  }).then((image) => {
-    // La imagen se ha capturado correctamente.
-    // Puedes hacer lo que quieras con ella.
-  }).catch((error) => {
-    // Se ha producido un error.
-  });
-}
-
-// Función para mostrar el carrete
-function mostrarCarrete() {
-  camera.getPictures().then((pictures) => {
-    // El carrete se ha cargado correctamente.
-    // Puedes hacer lo que quieras con él.
-  }).catch((error) => {
-    // Se ha producido un error.
-  });
-}
-
-// Eventos de los botones
-document.getElementById("abrir-camara").addEventListener("click", abrirCamara);
-document.getElementById("mostrar-carrete").addEventListener("click", mostrarCarrete);
+    }
   </script>
-
 </body>
 </html>
