@@ -35,7 +35,7 @@
 
       // Evento cuando se hace clic en el botón para tomar foto
       botonTomarFoto.addEventListener('click', function () {
-        tomarFoto();
+        abrirCamara();
       });
 
       // Función para mostrar la imagen seleccionada o tomada
@@ -48,8 +48,8 @@
         lector.readAsDataURL(archivo);
       }
 
-      // Función para tomar una foto utilizando la cámara
-      function tomarFoto() {
+      // Función para abrir la cámara y permitir al usuario tomar una foto
+      function abrirCamara() {
         navigator.mediaDevices.getUserMedia({ video: true })
           .then(function (stream) {
             var video = document.createElement('video');
