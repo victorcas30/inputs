@@ -6,22 +6,18 @@
     <title>Camara con Carrete</title>
 </head>
 <body>
-    <!-- Input para la cámara -->
-<input type="file" accept="image/*" capture="camera" id="inputCamera">
-<label for="inputCamera">Cámara</label>
 
-<!-- Input para el carrete de fotografías -->
-<input type="file" accept="image/*" id="inputGallery">
-<label for="inputGallery">Carrete</label>
-
-<!-- Contenedor para mostrar la cámara y el carrete -->
+<!-- Contenedor para la cámara y el carrete -->
 <div id="cameraContainer">
     <video id="cameraView" autoplay></video>
-    <input type="file" accept="image/*" id="inputGallery" onchange="loadImageFromGallery()">
-    <label for="inputGallery">Carrete</label>
+    <input type="file" accept="image/*" id="inputGallery" style="display: none;" onchange="loadImageFromGallery()">
+    <label for="inputGallery" id="galleryLabel">Carrete</label>
+    <button onclick="toggleCamera()">Alternar</button>
 </div>
 
 <script>
+let usingCamera = true;
+
 // Acceder a la cámara
 async function openCamera() {
     try {
@@ -45,9 +41,29 @@ function loadImageFromGallery() {
             const videoElement = document.getElementById('cameraView');
             videoElement.src = e.target.result;
             inputGallery.value = ''; // Limpiar la selección para permitir cargar la misma imagen nuevamente
+            toggleCamera(); // Volver a la cámara después de cargar una imagen
         };
 
         reader.readAsDataURL(file);
+    }
+}
+
+// Alternar entre cámara y carrete
+function toggleCamera() {
+    const cameraView = document.getElementById('cameraView');
+    const inputGallery = document.getElementById('inputGallery');
+    const galleryLabel = document.getElementById('galleryLabel');
+
+    if (usingCamera) {
+        cameraView.style.display = 'none';
+        inputGallery.style.display = 'initial';
+        galleryLabel.textContent = 'Cámara';
+        usingCamera = false;
+    } else {
+        cameraView.style.display = 'initial';
+        inputGallery.style.display = 'none';
+        galleryLabel.textContent = 'Carrete';
+        usingCamera = true;
     }
 }
 
