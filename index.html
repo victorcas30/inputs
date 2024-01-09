@@ -15,6 +15,11 @@
   <!-- Elemento para mostrar la imagen seleccionada o tomada -->
   <img id="imagenMostrada" style="display: none;">
 
+  <input type="file" capture="camera">
+
+<img src="data:image/png;base64,${imagenBase64}">
+
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Referencias a los elementos del DOM
