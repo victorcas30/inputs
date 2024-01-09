@@ -1,33 +1,26 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acceder a la cámara</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Examples</title>
 </head>
 <body>
-  <button onclick="accederCamara()">Abrir cámara</button>
-  <input type="file" accept="image/*" capture="camera">
-<input type="file" accept="image/*" capture="environment">
 
+    <label for="cameraCapture">Capture Camera:</label>
+    <input type="file" accept="image/*" capture="camera" id="cameraCapture"><br>
 
-  <script>
-    function accederCamara() {
-      // Verificar si el navegador admite la API de medios
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Solicitar acceso a la cámara
-        navigator.mediaDevices.getUserMedia({ video: true })
-          .then(function (stream) {
-            // El stream proporciona acceso a la cámara, puedes usarlo para mostrar la vista previa o realizar otras acciones
-            console.log('Cámara abierta correctamente');
-          })
-          .catch(function (error) {
-            console.error('Error al abrir la cámara:', error);
-          });
-      } else {
-        console.error('La API de medios no está soportada en este navegador');
-      }
-    }
-  </script>
+    <label for="camcorderCapture">Capture Camcorder (Video):</label>
+    <input type="file" accept="video/*" capture="camcorder" id="camcorderCapture"><br>
+
+    <label for="microphoneCapture">Capture Microphone (Audio):</label>
+    <input type="file" accept="audio/*" capture="microphone" id="microphoneCapture"><br>
+
+    <label for="userCapture">Capture User (Select File):</label>
+    <input type="file" accept="image/*" capture="user" id="userCapture"><br>
+
+    <label for="environmentCapture">Capture Environment (Camera or Carrete):</label>
+    <input type="file" accept="image/*" capture="environment" id="environmentCapture"><br>
+
 </body>
 </html>
