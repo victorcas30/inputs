@@ -3,17 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camara y Carrete</title>
+    <title>Camara con Carrete</title>
 </head>
 <body>
-
-<!-- Input para la cámara -->
+    <!-- Input para la cámara -->
 <input type="file" accept="image/*" capture="camera" id="inputCamera">
 <label for="inputCamera">Cámara</label>
 
 <!-- Input para el carrete de fotografías -->
 <input type="file" accept="image/*" id="inputGallery">
 <label for="inputGallery">Carrete</label>
+
+<!-- Contenedor para mostrar la cámara y el carrete -->
+<div id="cameraContainer">
+    <video id="cameraView" autoplay></video>
+    <input type="file" accept="image/*" id="inputGallery" onchange="loadImageFromGallery()">
+    <label for="inputGallery">Carrete</label>
+</div>
+
+<script>
+// Acceder a la cámara
+async function openCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const videoElement = document.getElementById('cameraView');
+        videoElement.srcObject = stream;
+    } catch (error) {
+        console.error('Error al acceder a la cámara: ', error);
+    }
+}
+
+// Cargar imagen seleccionada del carrete
+function loadImageFromGallery() {
+    const inputGallery = document.getElementById('inputGallery');
+    const file = inputGallery.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const videoElement = document.getElementById('cameraView');
+            videoElement.src = e.target.result;
+            inputGallery.value = ''; // Limpiar la selección para permitir cargar la misma imagen nuevamente
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+// Abrir la cámara al cargar la página
+window.onload = function () {
+    openCamera();
+};
+</script>
 
 </body>
 </html>
