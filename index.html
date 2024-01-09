@@ -1,77 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camara con Carrete</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seleccionar imagen o tomar foto</title>
 </head>
 <body>
 
-<!-- Contenedor para la cámara y el carrete -->
-<div id="cameraContainer">
-    <video id="cameraView" autoplay></video>
-    <input type="file" accept="image/*" id="inputGallery" style="display: none;" onchange="loadImageFromGallery()">
-    <label for="inputGallery" id="galleryLabel">Carrete</label>
-    <button onclick="toggleCamera()">Alternar</button>
-</div>
+  <h1>Seleccionar imagen o tomar foto</h1>
 
-<script>
-let usingCamera = true;
+  <!-- Input para seleccionar imágenes de la galería -->
+  <input type="file" id="inputImagen" accept="image/*">
 
-// Acceder a la cámara
-async function openCamera() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const videoElement = document.getElementById('cameraView');
-        videoElement.srcObject = stream;
-    } catch (error) {
-        console.error('Error al acceder a la cámara: ', error);
-    }
-}
+  <!-- Botón para tomar una foto -->
+  <button id="botonTomarFoto">Tomar Foto</button>
 
-// Cargar imagen seleccionada del carrete
-function loadImageFromGallery() {
-    const inputGallery = document.getElementById('inputGallery');
-    const file = inputGallery.files[0];
+  <!-- Elemento para mostrar la imagen seleccionada o tomada -->
+  <img id="imagenMostrada" style="display: none;">
 
-    if (file) {
-        const reader = new FileReader();
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Referencias a los elementos del DOM
+      var inputImagen = document.getElementById('inputImagen');
+      var botonTomarFoto = document.getElementById('botonTomarFoto');
+      var imagenMostrada = document.getElementById('imagenMostrada');
 
-        reader.onload = function (e) {
-            const videoElement = document.getElementById('cameraView');
-            videoElement.src = e.target.result;
-            inputGallery.value = ''; // Limpiar la selección para permitir cargar la misma imagen nuevamente
-            toggleCamera(); // Volver a la cámara después de cargar una imagen
+      // Evento cuando se selecciona una imagen de la galería
+      inputImagen.addEventListener('change', function (event) {
+        var archivo = event.target.files[0];
+        if (archivo) {
+          mostrarImagen(archivo);
+        }
+      });
+
+      // Evento cuando se hace clic en el botón para tomar foto
+      botonTomarFoto.addEventListener('click', function () {
+        tomarFoto();
+      });
+
+      // Función para mostrar la imagen seleccionada o tomada
+      function mostrarImagen(archivo) {
+        var lector = new FileReader();
+        lector.onload = function (e) {
+          imagenMostrada.src = e.target.result;
+          imagenMostrada.style.display = 'block';
         };
+        lector.readAsDataURL(archivo);
+      }
 
-        reader.readAsDataURL(file);
-    }
-}
+      // Función para tomar una foto utilizando la cámara
+      function tomarFoto() {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            var video = document.createElement('video');
+            document.body.appendChild(video);
+            video.srcObject = stream;
+            video.play();
 
-// Alternar entre cámara y carrete
-function toggleCamera() {
-    const cameraView = document.getElementById('cameraView');
-    const inputGallery = document.getElementById('inputGallery');
-    const galleryLabel = document.getElementById('galleryLabel');
+            video.addEventListener('canplay', function () {
+              var canvas = document.createElement('canvas');
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+              mostrarImagen(canvas.toDataURL('image/png'));
 
-    if (usingCamera) {
-        cameraView.style.display = 'none';
-        inputGallery.style.display = 'initial';
-        galleryLabel.textContent = 'Cámara';
-        usingCamera = false;
-    } else {
-        cameraView.style.display = 'initial';
-        inputGallery.style.display = 'none';
-        galleryLabel.textContent = 'Carrete';
-        usingCamera = true;
-    }
-}
+              // Detener la transmisión de la cámara
+              stream.getTracks().forEach(track => track.stop());
 
-// Abrir la cámara al cargar la página
-window.onload = function () {
-    openCamera();
-};
-</script>
+              // Eliminar el elemento de video
+              document.body.removeChild(video);
+            });
+          })
+          .catch(function (error) {
+            console.error('Error al acceder a la cámara: ', error);
+          });
+      }
+    });
+  </script>
 
 </body>
 </html>
