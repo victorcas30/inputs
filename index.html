@@ -25,6 +25,12 @@
 <input type="file" accept="image/*" capture="environment">
 
 
+
+  <button id="abrir-camara">Abrir cámara</button>
+  <button id="mostrar-carrete">Mostrar carrete</button>
+
+
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Referencias a los elementos del DOM
@@ -49,6 +55,34 @@
         lector.readAsDataURL(archivo);
       }
     });
+
+    const camera = navigator.camera;
+
+// Función para abrir la cámara
+function abrirCamara() {
+  camera.open({
+    mediaType: "image",
+  }).then((image) => {
+    // La imagen se ha capturado correctamente.
+    // Puedes hacer lo que quieras con ella.
+  }).catch((error) => {
+    // Se ha producido un error.
+  });
+}
+
+// Función para mostrar el carrete
+function mostrarCarrete() {
+  camera.getPictures().then((pictures) => {
+    // El carrete se ha cargado correctamente.
+    // Puedes hacer lo que quieras con él.
+  }).catch((error) => {
+    // Se ha producido un error.
+  });
+}
+
+// Eventos de los botones
+document.getElementById("abrir-camara").addEventListener("click", abrirCamara);
+document.getElementById("mostrar-carrete").addEventListener("click", mostrarCarrete);
   </script>
 
 </body>
