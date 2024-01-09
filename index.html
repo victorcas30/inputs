@@ -3,41 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camara con getUserMedia</title>
+  <title>Carrete del Dispositivo</title>
 </head>
 <body>
-  <button onclick="openCamera()">Abrir la cámara sin carrete</button>
-  <button onclick="openCameraWithGallery()">Abrir la cámara con carrete</button>
-  <button onclick="openGallery()">Abrir solo el carrete</button>
-  <video id="camera" width="640" height="480" autoplay></video>
+  <input type="file" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
+  <img id="selected-image" src="#" alt="Selected Image">
 
   <script>
-    async function openCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const videoElement = document.getElementById('camera');
-        videoElement.srcObject = stream;
-      } catch (error) {
-        console.error('Error accessing camera: ', error);
-      }
-    }
+    function handleFileSelect(event) {
+      const fileInput = event.target;
+      const selectedImage = document.getElementById('selected-image');
 
-    async function openCameraWithGallery() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        const videoElement = document.getElementById('camera');
-        videoElement.srcObject = stream;
-      } catch (error) {
-        console.error('Error accessing camera with gallery: ', error);
-      }
-    }
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
 
-    async function openGallery() {
-      try {
-        const [file] = await navigator.mediaDevices.enumerateDevices();
-        console.log(file);
-      } catch (error) {
-        console.error('Error accessing gallery: ', error);
+        reader.onload = function (e) {
+          selectedImage.src = e.target.result;
+        };
+
+        reader.readAsDataURL(fileInput.files[0]);
       }
     }
   </script>
