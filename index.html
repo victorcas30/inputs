@@ -3,47 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capture Examples</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Document</title>
 </head>
 <body>
+  <p>Primer foto</p>
+    <input type="file" accept="image/*" capture="environment" id="cameraInput">
 
-    <label for="cameraCapture">Capture Camera:</label>
-    <input type="file" accept="image/*" capture="camera" id="cameraCapture"><br>
+    <p>Segunda foto</p>
+    <button id="cameraButton">Abrir cámara</button>
+    <input type="file" accept="image/*" id="fileInput" style="display: none;">
 
-    <label for="camcorderCapture">Capture Camcorder (Video):</label>
-    <input type="file" accept="video/*" capture="camcorder" id="camcorderCapture"><br>
-
-    <label for="microphoneCapture">Capture Microphone (Audio):</label>
-    <input type="file" accept="audio/*" capture="microphone" id="microphoneCapture"><br>
-
-    <label for="userCapture">Capture User (Select File):</label>
-    <input type="file" accept="image/*" capture="user" id="userCapture"><br>
-
-    <label for="environmentCapture">Capture Environment (Camera or Carrete):</label>
-    <input type="file" accept="image/*" capture="environment" id="environmentCapture"><br>
-    
-    <label for="environmentCapture">Capture screen:</label>
-    <input type="file" capture="screen"><br>
-    
-    <label for="environmentCapture">Capture canvas:</label>
-    <input type="file" accept="image/*" capture="canvas" id="environmentCapture"><br>
-
-    <input type="file" accept="image/*" capture="camera">
-    <input type="file" accept="image/*">
-    <input type="file" accept="image/*" capture="environment">
-    <br />
-
-    <div class="input-group">
-      <input type="file" class="form-control-file" accept="image/*">
-      <div class="input-group-append">
-        <button type="button" class="btn btn-primary">
-          <i class="bi bi-camera"></i>
-        </button>
-      </div>
-    </div>
+<script>
+    document.getElementById('cameraInput').addEventListener('click', function() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            // Si se otorga el permiso para acceder a la cámara, detener la transmisión y eliminar la pista para cerrar la cámara
+            stream.getTracks().forEach(function(track) {
+            track.stop();
+            });
+        })
+        .catch(function(error) {
+            console.error('No se pudo acceder a la cámara: ', error);
+        });
+    } else {
+        console.error('getUserMedia no está soportado en este navegador');
+    }
+    });
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    document.getElementById('cameraButton').addEventListener('click', function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function(stream) {
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.setAttribute('autoplay', '');
+        video.setAttribute('playsinline', '');
+
+        const fileInput = document.getElementById('fileInput');
+        fileInput.style.display = 'block';
+
+        fileInput.addEventListener('change', function() {
+          // Aquí puedes acceder al archivo seleccionado
+          const selectedFile = fileInput.files[0];
+          // Hacer algo con el archivo seleccionado, por ejemplo, mostrar una vista previa
+          const imagePreview = document.createElement('img');
+          imagePreview.src = URL.createObjectURL(selectedFile);
+          document.body.appendChild(imagePreview);
+        });
+
+        document.body.appendChild(video);
+      })
+      .catch(function(error) {
+        console.error('No se pudo acceder a la cámara: ', error);
+      });
+  } else {
+    console.error('getUserMedia no está soportado en este navegador');
+  }
+});
+
+
+
+
+
+</script>
 </body>
 </html>
