@@ -1,72 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camara con getUserMedia</title>
 </head>
 <body>
-  <p>Primer foto</p>
-    <input type="file" accept="image/*" capture="environment" id="cameraInput">
+  <button onclick="openCamera()">Abrir la cámara sin carrete</button>
+  <button onclick="openCameraWithGallery()">Abrir la cámara con carrete</button>
+  <button onclick="openGallery()">Abrir solo el carrete</button>
+  <video id="camera" width="640" height="480" autoplay></video>
 
-    <p>Segunda foto</p>
-    <button id="cameraButton">Abrir cámara</button>
-    <input type="file" accept="image/*" id="fileInput" style="display: none;">
-
-<script>
-    document.getElementById('cameraInput').addEventListener('click', function() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function(stream) {
-            // Si se otorga el permiso para acceder a la cámara, detener la transmisión y eliminar la pista para cerrar la cámara
-            stream.getTracks().forEach(function(track) {
-            track.stop();
-            });
-        })
-        .catch(function(error) {
-            console.error('No se pudo acceder a la cámara: ', error);
-        });
-    } else {
-        console.error('getUserMedia no está soportado en este navegador');
+  <script>
+    async function openCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const videoElement = document.getElementById('camera');
+        videoElement.srcObject = stream;
+      } catch (error) {
+        console.error('Error accessing camera: ', error);
+      }
     }
-    });
 
+    async function openCameraWithGallery() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        const videoElement = document.getElementById('camera');
+        videoElement.srcObject = stream;
+      } catch (error) {
+        console.error('Error accessing camera with gallery: ', error);
+      }
+    }
 
-    document.getElementById('cameraButton').addEventListener('click', function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(function(stream) {
-        const video = document.createElement('video');
-        video.srcObject = stream;
-        video.setAttribute('autoplay', '');
-        video.setAttribute('playsinline', '');
-
-        const fileInput = document.getElementById('fileInput');
-        fileInput.style.display = 'block';
-
-        fileInput.addEventListener('change', function() {
-          // Aquí puedes acceder al archivo seleccionado
-          const selectedFile = fileInput.files[0];
-          // Hacer algo con el archivo seleccionado, por ejemplo, mostrar una vista previa
-          const imagePreview = document.createElement('img');
-          imagePreview.src = URL.createObjectURL(selectedFile);
-          document.body.appendChild(imagePreview);
-        });
-
-        document.body.appendChild(video);
-      })
-      .catch(function(error) {
-        console.error('No se pudo acceder a la cámara: ', error);
-      });
-  } else {
-    console.error('getUserMedia no está soportado en este navegador');
-  }
-});
-
-
-
-
-
-</script>
+    async function openGallery() {
+      try {
+        const [file] = await navigator.mediaDevices.enumerateDevices();
+        console.log(file);
+      } catch (error) {
+        console.error('Error accessing gallery: ', error);
+      }
+    }
+  </script>
 </body>
 </html>
