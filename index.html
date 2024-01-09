@@ -2,27 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carrete del Dispositivo</title>
+  <title>Manipular la cámara del celular</title>
 </head>
 <body>
-  <input type="file" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
-  <img id="selected-image" src="#" alt="Selected Image">
+  <input type="radio" name="camara" value="sin_carrete" checked> Abrir la cámara sin carrete
+  <input type="radio" name="camara" value="con_carrete"> Abrir la cámara con carrete
+  <input type="radio" name="camara" value="solo_carrete"> Abrir solo el carrete
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/photon/3.4.0/photon.min.js"></script>
   <script>
-    function handleFileSelect(event) {
-      const fileInput = event.target;
-      const selectedImage = document.getElementById('selected-image');
+    const camara = document.querySelector('input[name="camara"]:checked').value;
 
-      if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-          selectedImage.src = e.target.result;
-        };
-
-        reader.readAsDataURL(fileInput.files[0]);
-      }
+    if (camara === 'sin_carrete') {
+      Photon.openCamera({
+        mode: 'still',
+        allowEdit: false,
+        allowCrop: false,
+      });
+    } else if (camara === 'con_carrete') {
+      Photon.openCamera({
+        mode: 'still',
+        allowEdit: true,
+        allowCrop: true,
+      });
+    } else {
+      Photon.openGallery();
     }
   </script>
 </body>
